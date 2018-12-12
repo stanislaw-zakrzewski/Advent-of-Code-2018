@@ -1,95 +1,64 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 class Tunnel {
-    private LinkedList<Boolean> plants;
-    private List<SpreadKey> spreadKeys;
-    private int shift;
+    private Set<Integer> plants;
+    private Map<String, Boolean> spreadKeys;
+    private long brakeSize;
 
-    Tunnel(List<Boolean> plants, List<SpreadKey> spreadKeys) {
-        this.plants = new LinkedList<>();
-        for (Boolean b : plants) {
-            this.plants.addLast(b);
-        }
+    Tunnel(Set<Integer> plants, Map<String, Boolean> spreadKeys) {
+        this.plants = plants;
         this.spreadKeys = spreadKeys;
-        shift = 0;
-        checkListBoundries();
+        brakeSize = 0;
     }
 
-    private void checkListBoundries() {
-        checkLast();
-        checkFirst();
-    }
-
-    private void checkLast() {
-        if (plants.getLast()) {
-            plants.addLast(false);
-            plants.addLast(false);
-            plants.addLast(false);
-            plants.addLast(false);
-            plants.addLast(false);
-        } else {
-            plants.removeLast();
-            checkLast();
+    void goThroughNGenerations(long generation) {
+        for (long g = 0; g < generation; g++) {
+            Set<Integer> newPlants = new HashSet<>();
+            int min = Collections.min(plants);
+            int max = Collections.max(plants);
+            for (int i = min - 3; i < max + 3; i++) {
+                StringBuilder pattern = new StringBuilder();
+                for (int j = 0; j < 5; j++) {
+                    if (plants.contains(i + j)) {
+                        pattern.append("#");
+                    } else {
+                        pattern.append(".");
+                    }
+                }
+                if (spreadKeys.containsKey(pattern.toString())) {
+                    if (spreadKeys.get(pattern.toString())) {
+                        newPlants.add(i + 2);
+                    }
+                }
+            }/*
+            if(plants.size() == newPlants.size()) {
+                boolean breakerPlus = true;
+                for (Integer i : newPlants) {
+                    if (!plants.contains(i - 1)) {
+                        breakerPlus = false;
+                        break;
+                    }
+                }
+                if (breakerPlus) {
+                    long pom = plants.size();
+                    pom *= (50000000000L - g - 1);
+                    brakeSize = pom;
+                    System.out.println(pom);
+                    System.out.println((50000000000L-98)*81);
+                    System.out.println(g);
+                    break;
+                }
+            }*/
+            plants = newPlants;
         }
     }
 
-    private void checkFirst() {
-        if (plants.getFirst()) {
-            shift -= 5;
-            plants.addFirst(false);
-            plants.addFirst(false);
-            plants.addFirst(false);
-            plants.addFirst(false);
-            plants.addFirst(false);
-        } else {
-            shift++;
-            plants.removeFirst();
-            checkFirst();
-        }
-    }
-
-    void goThroughNGenerations(int generation) {
-        printPots();
-        for (int g = 0; g < generation; g++) {
-            List<Boolean> old = new ArrayList<>();
-            plants.forEach(p -> old.add(null));
-            Collections.copy(old, plants);
-            for(int i = 2; i < plants.size()-2; i++) {
-                setValue(i, old);
-            }
-            checkListBoundries();
-        }
-    }
-
-    private void printPots() {
-        for (boolean b : plants) {
-            if(b) {
-                System.out.print("#");
-            } else {
-                System.out.print(".");
-            }
-        }
-        System.out.println();
-    }
-
-    private void setValue(int i, List<Boolean> old) {
-        for(SpreadKey sk : spreadKeys) {
-            if(old.get(i-2) == sk.isLl() && old.get(i-1) == sk.isL() && old.get(i) == sk.isC() && old.get(i+1) == sk.isR() && old.get(i+2) == sk.isRr()) {
-                plants.set(i, sk.isValue());
-            }
-        }
-    }
-
-    int getSumOfPots() {
+    long getSumOfPots() {
         int ret = 0;
-        for(int i = 0; i < plants.size(); i++) {
-            if(plants.get(i)) {
-                ret += i + shift;
-            }
+        List<Integer> ints = new ArrayList<>(plants);
+        for (int i : ints) {
+            ret += i;
         }
-        return ret;
+        return ret + brakeSize;
     }
 }

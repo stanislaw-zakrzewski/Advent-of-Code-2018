@@ -1,33 +1,32 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
-public class ReadFile {
-    public static Tunnel readTunnel() {
-        List<Boolean> plants = new ArrayList<>();
-        List<SpreadKey> spreadKeys = new ArrayList<>();
-
+class ReadFile {
+    static Tunnel readTunnel() {
+        Set<Integer> plants = new HashSet<>();
+        HashMap<String, Boolean> spreadKeys = new HashMap<>();
+        Tunnel tunnel = null;
         try {
             Scanner scanner = new Scanner(new File("input.txt"));
             scanner.next();
             scanner.next();
             char[] plantsC = scanner.next().toCharArray();
-            for (char c : plantsC) {
-                plants.add(c == '#');
+            for (int i = 0; i < plantsC.length; i++) {
+                if (plantsC[i] == '#') {
+                    plants.add(i);
+                }
             }
-            while(scanner.hasNext()) {
-                char[] s = scanner.next().toCharArray();
+            while (scanner.hasNext()) {
+                String s = scanner.next();
                 scanner.next();
                 char[] c = scanner.next().toCharArray();
-                spreadKeys.add(new SpreadKey(s[0] == '#', s[1] == '#', s[2] == '#', s[3] == '#', s[4] == '#', c[0] == '#'));
+                spreadKeys.put(s, c[0] == '#');
             }
-            return new Tunnel(plants, spreadKeys);
+            tunnel = new Tunnel(plants, spreadKeys);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
-        return null;
+        return tunnel;
     }
 }
