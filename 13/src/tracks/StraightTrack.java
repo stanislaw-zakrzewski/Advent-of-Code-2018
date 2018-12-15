@@ -30,7 +30,7 @@ public class StraightTrack implements ITrack {
 
     private Move getPossibleMove(Move lastMove) {
         for(Move m : elementMoves) {
-            if(!m.equals(lastMove)) {
+            if(m.equals(lastMove)) {
                 return m;
             }
         }

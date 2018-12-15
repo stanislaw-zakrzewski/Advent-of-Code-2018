@@ -50,16 +50,16 @@ public class Cart {
         lastMove = move;
         switch (move) {
             case UP:
-                y--;
-                break;
-            case DOWN:
-                y++;
-                break;
-            case LEFT:
                 x--;
                 break;
-            case RIGHT:
+            case DOWN:
                 x++;
+                break;
+            case LEFT:
+                y--;
+                break;
+            case RIGHT:
+                y++;
                 break;
         }
     }

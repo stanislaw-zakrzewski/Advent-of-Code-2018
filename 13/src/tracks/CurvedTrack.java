@@ -4,6 +4,7 @@ import algorithm.Move;
 import cart.Cart;
 
 import java.util.HashSet;
+import java.util.List;
 
 public class CurvedTrack implements ITrack {
     private int x;
@@ -16,9 +17,8 @@ public class CurvedTrack implements ITrack {
         elementMoves = new HashSet<>();
     }
 
-    public void addMoves(Move first, Move second) {
-        elementMoves.add(first);
-        elementMoves.add(second);
+    public void addMoves(List<Move> moves) {
+        elementMoves.addAll(moves);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class CurvedTrack implements ITrack {
 
     private Move getPossibleMove(Move lastMove) {
         for (Move m : elementMoves) {
-            if (!m.equals(lastMove)) {
+            if (!m.equals(opposite(lastMove))) {
                 return m;
             }
         }
@@ -48,5 +48,13 @@ public class CurvedTrack implements ITrack {
     @Override
     public int getY() {
         return y;
+    }
+
+    private Move opposite(Move move) {
+        if(move == Move.UP) return Move.DOWN;
+        if(move == Move.DOWN) return Move.UP;
+        if(move == Move.LEFT) return Move.RIGHT;
+        if(move == Move.RIGHT) return Move.LEFT;
+        return null;
     }
 }
